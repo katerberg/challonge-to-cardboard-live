@@ -2,7 +2,7 @@ const fs = require('fs');
 const util = require('util');
 const data2xml = require('data2xml');
 
-const convert = data2xml({xmlDecl: false});
+const convert = data2xml();
 
 fs.readFileAsync = util.promisify(fs.readFile);
 
@@ -24,6 +24,7 @@ function transformResults(json) {
         .map(m => m.match)
         .reduce((a, c) => (a + (c.winner_id === p.id ? 3 : 0)), 0),
     }}));
+  teams.sort((a, b) => a._attr.Rank > b._attr.Rank ? 1 : -1);
 
   return convert('Standings', {Team: teams});
 }

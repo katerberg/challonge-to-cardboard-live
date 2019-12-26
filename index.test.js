@@ -5,8 +5,8 @@ function getRandomNumber() {
   return Math.floor(Math.random() * 1000 + 1);
 }
 
-function getParticipant() {
-  return {participant: {id: getRandomNumber(), name: `${Math.random()}`, seed: getRandomNumber()}};
+function getParticipant(seed) {
+  return {participant: {id: getRandomNumber(), name: `${Math.random()}`, seed: seed || getRandomNumber()}};
 }
 
 function getMatch(playerId, isWon) {
@@ -35,7 +35,7 @@ describe('Index', () => {
 
       const results = transformResults(input);
 
-      expect(results.startsWith('<Standings>')).to.be.true;
+      expect(results).to.contain('<Standings>');
     });
 
     it('contains teams for each entrant', async () => {
@@ -67,6 +67,24 @@ describe('Index', () => {
       });
 
       expect(results).to.contain(' MatchPoints="6"');
+    });
+
+    it('sorts participants by their rank', () => {
+      const p1 = getParticipant(2);
+      const p2 = getParticipant(1);
+
+      const results = transformResults({
+        participants: [p1, p2],
+        matches: [
+          getMatch(p1.participant.id, true),
+          getMatch(p2.participant.id, false),
+          getMatch(p1.participant.id, false),
+          getMatch(p2.participant.id, true),
+          getMatch(p2.participant.id, true),
+        ],
+      });
+
+      expect(results).to.match(/Rank="1".*MatchPoints="6".*Rank="2".*MatchPoints="3"/);
     });
   });
 });

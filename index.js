@@ -20,6 +20,9 @@ function transformResults(json) {
     .map(p => ({_attr: { 
       Rank: p.seed,
       Name: p.name,
+      MatchPoints: json.matches
+        .map(m => m.match)
+        .reduce((a, c) => (a + (c.winner_id === p.id ? 3 : 0)), 0),
     }}));
 
   return convert('Standings', {Team: teams});

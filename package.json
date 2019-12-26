@@ -1,0 +1,9 @@
+{
+  "name": "challonge-to-wltr",
+  "version": "0.0.0",
+  "description": "Node app to translate from Challonge export to WLTR export",
+  "main": "index.js",
+  "repository": "https://github.com/katerberg/challonge-to-wltr",
+  "author": "Katerberg",
+  "license": "AGPL-3.0-or-later"
+}

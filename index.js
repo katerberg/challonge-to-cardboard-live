@@ -28,7 +28,19 @@ function transformResults(json) {
   return convert('Standings', {Team: teams});
 }
 
+function translate() {
+  getTournamentResults().then(r => {
+    const xml = transformResults(r);
+    fs.writeFile(`${process.cwd()}/standings.xml`, xml, (err) => {
+      if (err) {
+        throw err;
+      }
+    });
+  });
+}
+
 module.exports = {
   getTournamentResults,
   transformResults,
+  translate,
 }

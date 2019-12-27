@@ -13,6 +13,12 @@ function getTournamentResults() {
   });
 }
 
+function getMatchPoints(matches, playerId) {
+  return matches
+    .map(m => m.match)
+    .reduce((a, c) => (a + (c.winner_id === playerId ? 3 : 0)), 0);
+}
+
 function transformResultsToXml(json) {
   const convert = data2xml();
   const teams = json.participants
@@ -21,10 +27,9 @@ function transformResultsToXml(json) {
       Rank: p.seed,
       Name: p.name,
       DCI: Math.floor(Math.random() * 10000 + 1),
-      MatchPoints: json.matches
-        .map(m => m.match)
-        .reduce((a, c) => (a + (c.winner_id === p.id ? 3 : 0)), 0),
+      MatchPoints: getMatchPoints(json.matches, p.id),
     }}));
+
   teams.sort((a, b) => a._attr.Rank > b._attr.Rank ? 1 : -1);
 
   return convert('Standings', {Team: teams});
@@ -32,6 +37,18 @@ function transformResultsToXml(json) {
 
 function transformResultsToHtml(json) {
   const convert = data2xml({xmlDecl: false});
+  const playersWithMatchPoints  = json.participants
+    .map(p => p.participant)
+    .map(p => ({
+      td: ['nada', p.name, getMatchPoints(json.matches, p.id), null]
+    }));
+
+  playersWithMatchPoints.sort((a,b) => a.td[2] > b.td[2] ? -1 : 1);
+  const players = playersWithMatchPoints.map(p=> p.td)
+    .map((p, i) => ({
+      td: [i + 1, p[1], p[2], 'nada']
+    }));
+
   return convert('html', {body: {
     table: {
       _attr: {
@@ -45,11 +62,7 @@ function transformResultsToHtml(json) {
           {b: 'Player'},
           {b: 'Points'},
           {b: 'OMW%'},
-        ]}].concat(json.participants
-          .map(p => p.participant)
-          .map(p => ({
-            td: [p.seed, p.name, '3', '0.333']
-          }))),
+        ]}].concat(players),
       }
     },
   }});

@@ -3,4 +3,5 @@
 .DS_STORE
 *.log
 /standings.xml
+/standings.html
 /players.csv

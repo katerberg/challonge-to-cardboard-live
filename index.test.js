@@ -6,7 +6,7 @@ function getRandomNumber() {
 }
 
 function getParticipant(seed) {
-  return {participant: {id: getRandomNumber(), name: `${Math.random()}`, seed: seed || getRandomNumber()}};
+  return {participant: {id: getRandomNumber(), name: `${getRandomNumber()}`, seed: seed || getRandomNumber()}};
 }
 
 function getMatch(playerId, isWon) {
@@ -110,6 +110,25 @@ describe('Index', () => {
       expect(results).to.contain('<th><b>Points</b></th>');
       expect(results).to.contain('<th><b>OMW%</b></th>');
       expect((results.match(/<tr>/g) || []).length).to.equal(9);
+    });
+
+    it('sorts participants by their match wins', () => {
+      const p1 = getParticipant(2);
+      const p2 = getParticipant(1);
+
+      const results = transformResultsToHtml({
+        participants: [p1, p2],
+        matches: [
+          getMatch(p1.participant.id, true),
+          getMatch(p2.participant.id, false),
+          getMatch(p1.participant.id, true),
+          getMatch(p2.participant.id, false),
+          getMatch(p2.participant.id, true),
+        ],
+      });
+
+      expect(results).to.match(/<td>1<\/td><td>\w*<\/td><td>6<\/td>/);
+      expect(results).to.match(/<td>6<\/td>.*<td>3<\/td>/);
     });
   });
 

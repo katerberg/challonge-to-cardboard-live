@@ -88,11 +88,6 @@ function translate() {
     const xml = transformResultsToXml(r);
     const html = transformResultsToHtml(r);
     const players = getPlayers(r);
-    fs.writeFile(`${process.cwd()}/standings.xml`, xml, (err) => {
-      if (err) {
-        throw err;
-      }
-    });
     fs.writeFile(`${process.cwd()}/rd8-standings.html`, html, (err) => {
       if (err) {
         throw err;

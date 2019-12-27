@@ -1,5 +1,5 @@
 const {expect} = require('chai');
-const {getTournamentResults, transformResults} = require('.');
+const {getPlayers, getTournamentResults, transformResults} = require('.');
 
 function getRandomNumber() {
   return Math.floor(Math.random() * 1000 + 1);
@@ -85,6 +85,26 @@ describe('Index', () => {
       });
 
       expect(results).to.match(/Rank="1".*MatchPoints="6".*Rank="2".*MatchPoints="3"/);
+    });
+  });
+
+  describe('getPlayers(challongeExport)', () => {
+    it('gives player names as csv', () => {
+      const p1 = getParticipant(2);
+      const p2 = getParticipant(1);
+
+      const results = getPlayers({
+        participants: [p1, p2],
+        matches: [
+          getMatch(p1.participant.id, true),
+          getMatch(p2.participant.id, false),
+          getMatch(p1.participant.id, false),
+          getMatch(p2.participant.id, true),
+          getMatch(p2.participant.id, true),
+        ],
+      });
+
+      expect(results).to.contain(`"${p1.participant.name}",`);
     });
   });
 });

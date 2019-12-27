@@ -20,6 +20,7 @@ function transformResults(json) {
     .map(p => ({_attr: { 
       Rank: p.seed,
       Name: p.name,
+      DCI: Math.floor(Math.random() * 10000 + 1),
       MatchPoints: json.matches
         .map(m => m.match)
         .reduce((a, c) => (a + (c.winner_id === p.id ? 3 : 0)), 0),
@@ -29,10 +30,21 @@ function transformResults(json) {
   return convert('Standings', {Team: teams});
 }
 
+function getPlayers(json) {
+  return json.participants.map(p => p.participant)
+    .reduce((a, c) => a + `"${c.name}",${Math.floor(Math.random() * 10000 + 1)}\n`, 'Name,DCI\n');
+}
+
 function translate() {
   getTournamentResults().then(r => {
     const xml = transformResults(r);
+    const players = getPlayers(r);
     fs.writeFile(`${process.cwd()}/standings.xml`, xml, (err) => {
+      if (err) {
+        throw err;
+      }
+    });
+    fs.writeFile(`${process.cwd()}/players.csv`, players, (err) => {
       if (err) {
         throw err;
       }
@@ -42,6 +54,7 @@ function translate() {
 
 module.exports = {
   getTournamentResults,
+  getPlayers,
   transformResults,
   translate,
 }

@@ -1,5 +1,5 @@
 const {expect} = require('chai');
-const {getPlayers, getTournamentResults, transformResults} = require('.');
+const {getPlayers, getTournamentResults, transformResultsToXml} = require('.');
 
 function getRandomNumber() {
   return Math.floor(Math.random() * 1000 + 1);
@@ -29,11 +29,11 @@ describe('Index', () => {
     });
   });
 
-  describe('transformResults(challongeExport)', () => {
+  describe('transformResultsToXml(challongeExport)', () => {
     it('is a list of standings', async () => {
       const input = await getTournamentResults();
 
-      const results = transformResults(input);
+      const results = transformResultsToXml(input);
 
       expect(results).to.contain('<Standings>');
     });
@@ -41,7 +41,7 @@ describe('Index', () => {
     it('contains teams for each entrant', async () => {
       const input = await getTournamentResults();
 
-      const results = transformResults(input);
+      const results = transformResultsToXml(input);
 
       expect((results.match(/<Team /g) || []).length).to.equal(8);
     });
@@ -49,7 +49,7 @@ describe('Index', () => {
     it('contains base info', async () => {
       const p = getParticipant();
 
-      const results = transformResults({participants: [p], matches: []});
+      const results = transformResultsToXml({participants: [p], matches: []});
 
       expect(results).to.contain(`<Team Rank="${p.participant.seed}" Name="${p.participant.name}"`);
     });
@@ -57,7 +57,7 @@ describe('Index', () => {
     it('calculates match points based on existing matches', async () => {
       const p = getParticipant();
 
-      const results = transformResults({
+      const results = transformResultsToXml({
         participants: [p],
         matches: [
           getMatch(p.participant.id, true),
@@ -73,7 +73,7 @@ describe('Index', () => {
       const p1 = getParticipant(2);
       const p2 = getParticipant(1);
 
-      const results = transformResults({
+      const results = transformResultsToXml({
         participants: [p1, p2],
         matches: [
           getMatch(p1.participant.id, true),

@@ -14,7 +14,7 @@ function getTournamentResults() {
   });
 }
 
-function transformResults(json) {
+function transformResultsToXml(json) {
   const teams = json.participants
     .map(p => p.participant)
     .map(p => ({_attr: { 
@@ -30,6 +30,9 @@ function transformResults(json) {
   return convert('Standings', {Team: teams});
 }
 
+function transformResultsToHtml(json) {
+}
+
 function getPlayers(json) {
   return json.participants.map(p => p.participant)
     .reduce((a, c) => a + `"${c.name}",${Math.floor(Math.random() * 10000 + 1)}\n`, 'Name,DCI\n');
@@ -37,9 +40,15 @@ function getPlayers(json) {
 
 function translate() {
   getTournamentResults().then(r => {
-    const xml = transformResults(r);
+    const xml = transformResultsToXml(r);
+    const html = transformResultsToHtml(r);
     const players = getPlayers(r);
     fs.writeFile(`${process.cwd()}/standings.xml`, xml, (err) => {
+      if (err) {
+        throw err;
+      }
+    });
+    fs.writeFile(`${process.cwd()}/standings.html`, html, (err) => {
       if (err) {
         throw err;
       }
@@ -55,6 +64,7 @@ function translate() {
 module.exports = {
   getTournamentResults,
   getPlayers,
-  transformResults,
+  transformResultsToHtml,
+  transformResultsToXml,
   translate,
 }

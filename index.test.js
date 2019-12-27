@@ -5,18 +5,31 @@ function getRandomNumber() {
   return Math.floor(Math.random() * 1000 + 1);
 }
 
-function getParticipant() {
-  return {participant: {id: getRandomNumber(), name: `${getRandomNumber()}`, seed: getRandomNumber()}};
+function getParticipant(name) {
+  return {participant: {id: getRandomNumber(), name: name || `${getRandomNumber()}`, seed: getRandomNumber()}};
 }
 
-function getMatch(playerId, isWon) {
+function getMatch(playerId, isWon, gamesGivenUp) {
   const isPlayerOne = Math.random() > 0.5;
+  let csv = '2-';
+  if (gamesGivenUp) {
+    csv += '1';
+  } else {
+    csv += '0';
+  }
+  if ((isPlayerOne && !isWon) || (!isPlayerOne && isWon)) {
+    csv = csv.split('').reverse().join('');
+  }
+
+
   return {
     match: {
       id: getRandomNumber(),
       player1_id: isPlayerOne ? playerId : getRandomNumber(),
       player2_id: isPlayerOne ? getRandomNumber() : playerId,
       winner_id: isWon ? playerId : getRandomNumber(),
+      loser_id: isWon ? getRandomNumber() : playerId,
+      scores_csv: csv,
     }
   };
 }
@@ -127,22 +140,21 @@ describe('Index', () => {
     });
 
     it('subsorts participants by their game point differentials', () => {
-      const p1 = getParticipant();
-      const p2 = getParticipant();
+      const p1 = getParticipant('John Morris');
+      const p2 = getParticipant('Mark Katerberg');
 
       const results = transformResultsToHtml({
         participants: [p1, p2],
         matches: [
-          getMatch(p1.participant.id, true),
-          getMatch(p2.participant.id, false),
-          getMatch(p1.participant.id, true),
-          getMatch(p2.participant.id, false),
-          getMatch(p2.participant.id, true),
+          getMatch(p1.participant.id, true, 1),
+          getMatch(p1.participant.id, false, 0),
+          getMatch(p2.participant.id, true, 1),
+          getMatch(p2.participant.id, false, 1),
         ],
       });
 
-      expect(results).to.match(/<td>1<\/td><td>\w*<\/td><td>6<\/td>/);
-      expect(results).to.match(/<td>6<\/td>.*<td>3<\/td>/);
+      expect(results).to.match(/<td>1<\/td><td>Katerberg, Mark<\/td><td>3<\/td>/);
+      expect(results).to.match(/<td>2<\/td><td>Morris, John<\/td><td>3<\/td>/);
     });
   });
 

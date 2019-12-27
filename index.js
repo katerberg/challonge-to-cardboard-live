@@ -17,6 +17,23 @@ function getMatchPoints(matches, playerId) {
     .reduce((a, c) => (a + (c.winner_id === playerId ? 3 : 0)), 0);
 }
 
+function getGamePointDifferential(matches, playerId) {
+  return matches
+    .map(m => m.match)
+    .reduce((a, c) => {
+      let points = 0;
+      if (c.winner_id === playerId) {
+        points += 2;
+        points -= c.scores_csv.match(/1/) ? 1 : 0;
+      }
+      if (c.loser_id === playerId) {
+        points -= 2;
+        points += c.scores_csv.match(/1/) ? 1 : 0;
+      }
+      return (a + points);
+    }, 0);
+}
+
 function transformResultsToXml(json) {
   const convert = data2xml();
   const teams = json.participants
@@ -38,10 +55,11 @@ function transformResultsToHtml(json) {
   const playersWithMatchPoints  = json.participants
     .map(p => p.participant)
     .map(p => ({
-      td: ['nada', commaSeparateName(p.name), getMatchPoints(json.matches, p.id), '0.5']
+      td: ['nada', commaSeparateName(p.name), getMatchPoints(json.matches, p.id), '0.5'],
+      gamePointDifferential: getGamePointDifferential(json.matches, p.id),
     }));
 
-  playersWithMatchPoints.sort((a,b) => a.td[2] > b.td[2] ? -1 : 1);
+  playersWithMatchPoints.sort((a,b) => a.gamePointDifferential > b.gamePointDifferential ? -1 : 1);
   const players = playersWithMatchPoints.map(p=> p.td)
     .map((p, i) => ({
       td: [i + 1, p[1], p[2], p[3]]

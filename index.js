@@ -38,7 +38,7 @@ function transformResultsToHtml(json) {
   const playersWithMatchPoints  = json.participants
     .map(p => p.participant)
     .map(p => ({
-      td: ['nada', p.name, getMatchPoints(json.matches, p.id), '0.5']
+      td: ['nada', commaSeparateName(p.name), getMatchPoints(json.matches, p.id), '0.5']
     }));
 
   playersWithMatchPoints.sort((a,b) => a.td[2] > b.td[2] ? -1 : 1);
@@ -70,7 +70,17 @@ function transformResultsToHtml(json) {
 
 function getPlayers(json) {
   return json.participants.map(p => p.participant)
-    .reduce((a, c) => a + `"${c.name}",${Math.floor(Math.random() * 10000 + 1)}\n`, 'Name,DCI\n');
+    .reduce((a, c) => a + `"${commaSeparateName(c.name)}",${Math.floor(Math.random() * 10000 + 1)}\n`, 'Name,DCI\n');
+}
+
+function commaSeparateName(name) {
+  const lastSpacePosition = name.lastIndexOf(' ');
+  if (lastSpacePosition === -1) {
+    return name;
+  }
+  const lastName = name.slice(lastSpacePosition + 1, name.length);
+  const firstName = name.slice(0, lastSpacePosition);
+  return `${lastName}, ${firstName}`;
 }
 
 function translate() {

@@ -99,16 +99,30 @@ describe('Index', () => {
       expect(results).to.contain('<tbody>');
     });
 
-    it('contains row for each entrant plus a header', async () => {
+    it('reverses first and last names', async () => {
       const input = await getTournamentResults();
 
       const results = transformResultsToHtml(input);
 
-      expect(results).to.contain('<th><b>Rank</b></th>');
-      expect(results).to.contain('<th><b>Player</b></th>');
-      expect(results).to.contain('<th><b>Points</b></th>');
-      expect(results).to.contain('<th><b>OMW%</b></th>');
       expect((results.match(/<tr>/g) || []).length).to.equal(9);
+    });
+
+    it('contains row for each entrant plus a header', async () => {
+      const p1 = getParticipant(1);
+      const p2 = getParticipant(2);
+      p1.participant.name = 'Elaine Cao';
+      p2.participant.name = 'John Ryan Hamilton';
+      const input = {
+        participants: [p1, p2],
+        matches: [
+          getMatch(p1.participant.id, true),
+        ],
+      };
+
+      const results = transformResultsToHtml(input);
+
+      expect(results).to.contain('<td>Cao, Elaine</td>');
+      expect(results).to.contain('<td>Hamilton, John Ryan</td>');
     });
 
     it('sorts participants by their match wins', () => {
@@ -135,6 +149,8 @@ describe('Index', () => {
     it('gives player names as csv', () => {
       const p1 = getParticipant(2);
       const p2 = getParticipant(1);
+      p1.participant.name = 'Elaine Cao';
+      p2.participant.name = 'John Ryan Hamilton';
 
       const results = getPlayers({
         participants: [p1, p2],
@@ -147,7 +163,8 @@ describe('Index', () => {
         ],
       });
 
-      expect(results).to.contain(`"${p1.participant.name}",`);
+      expect(results).to.contain(`"Cao, Elaine",`);
+      expect(results).to.contain(`"Hamilton, John Ryan",`);
     });
   });
 });

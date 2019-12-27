@@ -2,7 +2,6 @@ const fs = require('fs');
 const util = require('util');
 const data2xml = require('data2xml');
 
-const convert = data2xml();
 
 fs.readFileAsync = util.promisify(fs.readFile);
 
@@ -15,6 +14,7 @@ function getTournamentResults() {
 }
 
 function transformResultsToXml(json) {
+  const convert = data2xml();
   const teams = json.participants
     .map(p => p.participant)
     .map(p => ({_attr: { 
@@ -31,6 +31,28 @@ function transformResultsToXml(json) {
 }
 
 function transformResultsToHtml(json) {
+  const convert = data2xml({xmlDecl: false});
+  return convert('html', {body: {
+    table: {
+      _attr: {
+        shade: '1',
+        shadecolor: '#ffffcc',
+        w: '500',
+      },
+      tbody: {
+        tr: [{th: [
+          {b: 'Rank'},
+          {b: 'Player'},
+          {b: 'Points'},
+          {b: 'OMW%'},
+        ]}].concat(json.participants
+          .map(p => p.participant)
+          .map(p => ({
+            td: [p.seed, p.name, '3', '0.333']
+          }))),
+      }
+    },
+  }});
 }
 
 function getPlayers(json) {

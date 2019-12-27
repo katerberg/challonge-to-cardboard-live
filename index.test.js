@@ -1,5 +1,5 @@
 const {expect} = require('chai');
-const {getPlayers, getTournamentResults, transformResultsToXml} = require('.');
+const {getPlayers, getTournamentResults, transformResultsToHtml, transformResultsToXml} = require('.');
 
 function getRandomNumber() {
   return Math.floor(Math.random() * 1000 + 1);
@@ -85,6 +85,31 @@ describe('Index', () => {
       });
 
       expect(results).to.match(/Rank="1".*MatchPoints="6".*Rank="2".*MatchPoints="3"/);
+    });
+  });
+
+  describe('transformResultsToXml(challongeExport)', () => {
+    it('is a list of standings', async () => {
+      const input = await getTournamentResults();
+
+      const results = transformResultsToHtml(input);
+
+      expect(results).to.contain('<html>');
+      expect(results).to.contain('<body>');
+      expect(results).to.contain('<table shade="1" shadecolor="#ffffcc" w="500">');
+      expect(results).to.contain('<tbody>');
+    });
+
+    it('contains row for each entrant plus a header', async () => {
+      const input = await getTournamentResults();
+
+      const results = transformResultsToHtml(input);
+
+      expect(results).to.contain('<th><b>Rank</b></th>');
+      expect(results).to.contain('<th><b>Player</b></th>');
+      expect(results).to.contain('<th><b>Points</b></th>');
+      expect(results).to.contain('<th><b>OMW%</b></th>');
+      expect((results.match(/<tr>/g) || []).length).to.equal(9);
     });
   });
 

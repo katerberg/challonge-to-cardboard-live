@@ -2,9 +2,7 @@ const fs = require('fs');
 const util = require('util');
 const data2xml = require('data2xml');
 
-
 fs.readFileAsync = util.promisify(fs.readFile);
-
 
 function getTournamentResults() {
   return fs.readFileAsync(`${process.cwd()}/sample-input.json`, 'utf-8').then((unparsedResults) => {
@@ -40,16 +38,16 @@ function transformResultsToHtml(json) {
   const playersWithMatchPoints  = json.participants
     .map(p => p.participant)
     .map(p => ({
-      td: ['nada', p.name, getMatchPoints(json.matches, p.id), null]
+      td: ['nada', p.name, getMatchPoints(json.matches, p.id), '0.5']
     }));
 
   playersWithMatchPoints.sort((a,b) => a.td[2] > b.td[2] ? -1 : 1);
   const players = playersWithMatchPoints.map(p=> p.td)
     .map((p, i) => ({
-      td: [i + 1, p[1], p[2], 'nada']
+      td: [i + 1, p[1], p[2], p[3]]
     }));
 
-  return convert('html', {body: {
+  const converted = convert('a', {
     table: {
       _attr: {
         shade: '1',
@@ -65,7 +63,9 @@ function transformResultsToHtml(json) {
         ]}].concat(players),
       }
     },
-  }});
+  }
+  );
+  return converted.slice(3, converted.length - 4);
 }
 
 function getPlayers(json) {
@@ -83,7 +83,7 @@ function translate() {
         throw err;
       }
     });
-    fs.writeFile(`${process.cwd()}/standings.html`, html, (err) => {
+    fs.writeFile(`${process.cwd()}/rd8-standings.html`, html, (err) => {
       if (err) {
         throw err;
       }

@@ -94,9 +94,8 @@ describe('Index', () => {
 
       const results = transformResultsToHtml(input);
 
-      expect(results).to.contain('<html>');
-      expect(results).to.contain('<body>');
-      expect(results).to.contain('<table shade="1" shadecolor="#ffffcc" w="500">');
+      expect(results.startsWith('<table shade="1" shadecolor="#ffffcc" w="500">')).to.be.true;
+      expect(results.endsWith('</table>')).to.be.true;
       expect(results).to.contain('<tbody>');
     });
 

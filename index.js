@@ -59,7 +59,13 @@ function transformResultsToHtml(json) {
       gamePointDifferential: getGamePointDifferential(json.matches, p.id),
     }));
 
-  playersWithMatchPoints.sort((a,b) => a.gamePointDifferential > b.gamePointDifferential ? -1 : 1);
+  playersWithMatchPoints.sort((a,b) => {
+    if (a.td[2] >= b.td[2]) {
+      return a.gamePointDifferential > b.gamePointDifferential ? -1 : 1;
+    } else {
+      return 1;
+    }
+  });
   const players = playersWithMatchPoints.map(p=> p.td)
     .map((p, i) => ({
       td: [i + 1, p[1], p[2], p[3]]

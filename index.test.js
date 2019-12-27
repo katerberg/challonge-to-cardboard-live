@@ -156,6 +156,14 @@ describe('Index', () => {
       expect(results).to.match(/<td>1<\/td><td>Katerberg, Mark<\/td><td>3<\/td>/);
       expect(results).to.match(/<td>2<\/td><td>Morris, John<\/td><td>3<\/td>/);
     });
+
+    it('prevents point differential from breaking past the match points', async () => {
+      const input = await getTournamentResults();
+
+      const results = transformResultsToHtml(input);
+
+      expect(results).to.match(/<td>2<\/td><td>Curry, Brandon<\/td><td>15<\/td>/);
+    });
   });
 
   describe('getPlayers(challongeExport)', () => {

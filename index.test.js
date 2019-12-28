@@ -1,5 +1,11 @@
+const fs = require('fs');
+const util = require('util');
 const {expect} = require('chai');
 const {getPlayers, getTournamentResults, transformResultsToHtml, transformResultsToXml} = require('.');
+const sinon = require('sinon');
+const axios = require('axios');
+
+fs.readFileAsync = util.promisify(fs.readFile);
 
 function getRandomNumber() {
   return Math.floor(Math.random() * 1000 + 1);
@@ -34,17 +40,36 @@ function getMatch(playerId, isWon, gamesGivenUp) {
   };
 }
 
+function getSampleResults() {
+  return fs.readFileAsync(`${process.cwd()}/sample-input.json`, 'utf-8').then((unparsedResults) => {
+    const results = JSON.parse(unparsedResults);
+    return results.tournament;
+  });
+}
+
 describe('Index', () => {
   describe('getTournamentResults()', () => {
+    beforeEach(()=> {
+      sinon.stub(axios,'get');
+    });
+
+    afterEach(() => {
+      axios.get.restore();
+    });
+
     it('gives valid json', async () => {
+      const expected = Math.random();
+      axios.get.returns(Promise.resolve({data: {tournament: expected}}));
+
       const results = await getTournamentResults();
-      expect(results.game_name).to.equal('Magic: The Gathering');
+
+      expect(results).to.equal(expected);
     });
   });
 
   describe('transformResultsToXml(challongeExport)', () => {
     it('is a list of standings', async () => {
-      const input = await getTournamentResults();
+      const input = await getSampleResults();
 
       const results = transformResultsToXml(input);
 
@@ -52,7 +77,7 @@ describe('Index', () => {
     });
 
     it('contains teams for each entrant', async () => {
-      const input = await getTournamentResults();
+      const input = await getSampleResults();
 
       const results = transformResultsToXml(input);
 
@@ -85,7 +110,7 @@ describe('Index', () => {
 
   describe('transformResultsToXml(challongeExport)', () => {
     it('is a list of standings', async () => {
-      const input = await getTournamentResults();
+      const input = await getSampleResults();
 
       const results = transformResultsToHtml(input);
 
@@ -95,7 +120,7 @@ describe('Index', () => {
     });
 
     it('reverses first and last names', async () => {
-      const input = await getTournamentResults();
+      const input = await getSampleResults();
 
       const results = transformResultsToHtml(input);
 
@@ -158,7 +183,7 @@ describe('Index', () => {
     });
 
     it('prevents point differential from breaking past the match points', async () => {
-      const input = await getTournamentResults();
+      const input = await getSampleResults();
 
       const results = transformResultsToHtml(input);
 

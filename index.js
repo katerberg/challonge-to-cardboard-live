@@ -1,13 +1,14 @@
 const fs = require('fs');
-const util = require('util');
+const creds = require('./creds/challonge.json');
 const data2xml = require('data2xml');
+const axios = require('axios');
 
-fs.readFileAsync = util.promisify(fs.readFile);
+
 
 function getTournamentResults() {
-  return fs.readFileAsync(`${process.cwd()}/sample-input.json`, 'utf-8').then((unparsedResults) => {
-    const results = JSON.parse(unparsedResults);
-    return results.tournament;
+  const url = `https://${creds.user}:${creds.api_key}@api.challonge.com/v1/tournaments/8aroof4o.json?include_matches=1&include_participants=1`;
+  return axios.get(url).then(r => {
+    return r.data.tournament;
   });
 }
 

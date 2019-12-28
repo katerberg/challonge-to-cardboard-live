@@ -29,7 +29,7 @@ function getMatch(playerId = getRandomNumber(), isWon = false, gamesGivenUp = 0,
   } else {
     csv += '0';
   }
-  if ((isPlayerOne && !isWon) || (!isPlayerOne && isWon)) {
+  if (isPlayerOne && !isWon || !isPlayerOne && isWon) {
     csv = csv.split('').reverse().join('');
   }
 
@@ -37,13 +37,13 @@ function getMatch(playerId = getRandomNumber(), isWon = false, gamesGivenUp = 0,
   return {
     match: {
       id: getRandomNumber(),
-      player1_id: isPlayerOne ? playerId : getRandomNumber(),
-      player2_id: isPlayerOne ? getRandomNumber() : playerId,
-      winner_id: isWon ? playerId : getRandomNumber(),
-      loser_id: isWon ? getRandomNumber() : playerId,
-      scores_csv: csv,
+      player1_id: isPlayerOne ? playerId : getRandomNumber(), //eslint-disable-line camelcase
+      player2_id: isPlayerOne ? getRandomNumber() : playerId, //eslint-disable-line camelcase
+      winner_id: isWon ? playerId : getRandomNumber(), //eslint-disable-line camelcase
+      loser_id: isWon ? getRandomNumber() : playerId, //eslint-disable-line camelcase
+      scores_csv: csv, //eslint-disable-line camelcase
       round: round || getRandomNumber(),
-    }
+    },
   };
 }
 
@@ -56,15 +56,15 @@ function getSampleResults() {
 
 describe('Index', () => {
   describe('getTournamentResults()', () => {
-    beforeEach(()=> {
-      sinon.stub(axios,'get');
+    beforeEach(() => {
+      sinon.stub(axios, 'get');
     });
 
     afterEach(() => {
       axios.get.restore();
     });
 
-    it('gives valid json', async () => {
+    it('gives valid json', async() => {
       const expected = Math.random();
       axios.get.returns(Promise.resolve({data: {tournament: expected}}));
 
@@ -75,7 +75,7 @@ describe('Index', () => {
   });
 
   describe('transformResultsToXml(challongeExport)', () => {
-    it('is a list of standings', async () => {
+    it('is a list of standings', async() => {
       const input = await getSampleResults();
 
       const results = transformResultsToXml(input);
@@ -83,7 +83,7 @@ describe('Index', () => {
       expect(results).to.contain('<Standings>');
     });
 
-    it('contains teams for each entrant', async () => {
+    it('contains teams for each entrant', async() => {
       const input = await getSampleResults();
 
       const results = transformResultsToXml(input);
@@ -91,7 +91,7 @@ describe('Index', () => {
       expect((results.match(/<Team /g) || []).length).to.equal(8);
     });
 
-    it('contains base info', async () => {
+    it('contains base info', async() => {
       const p = getParticipant();
 
       const results = transformResultsToXml({participants: [p], matches: []});
@@ -99,7 +99,7 @@ describe('Index', () => {
       expect(results).to.contain(`<Team Rank="${p.participant.seed}" Name="${p.participant.name}"`);
     });
 
-    it('calculates match points based on existing matches', async () => {
+    it('calculates match points based on existing matches', async() => {
       const p = getParticipant();
 
       const results = transformResultsToXml({
@@ -116,7 +116,7 @@ describe('Index', () => {
   });
 
   describe('transformResultsToXml(challongeExport)', () => {
-    it('is a list of standings', async () => {
+    it('is a list of standings', async() => {
       const input = await getSampleResults();
 
       const results = transformResultsToHtml(input);
@@ -126,7 +126,7 @@ describe('Index', () => {
       expect(results).to.contain('<tbody>');
     });
 
-    it('reverses first and last names', async () => {
+    it('reverses first and last names', async() => {
       const input = await getSampleResults();
 
       const results = transformResultsToHtml(input);
@@ -134,7 +134,7 @@ describe('Index', () => {
       expect((results.match(/<tr>/g) || []).length).to.equal(9);
     });
 
-    it('contains row for each entrant plus a header', async () => {
+    it('contains row for each entrant plus a header', async() => {
       const p1 = getParticipant();
       const p2 = getParticipant();
       p1.participant.name = 'Elaine Cao';
@@ -189,7 +189,7 @@ describe('Index', () => {
       expect(results).to.match(/<td>2<\/td><td>Morris, John<\/td><td>3<\/td>/);
     });
 
-    it('prevents point differential from breaking past the match points', async () => {
+    it('prevents point differential from breaking past the match points', async() => {
       const input = await getSampleResults();
 
       const results = transformResultsToHtml(input);
@@ -216,8 +216,8 @@ describe('Index', () => {
         ],
       });
 
-      expect(results).to.contain(`"Cao, Elaine",`);
-      expect(results).to.contain(`"Hamilton, John Ryan",`);
+      expect(results).to.contain('"Cao, Elaine",');
+      expect(results).to.contain('"Hamilton, John Ryan",');
     });
   });
 
@@ -228,7 +228,7 @@ describe('Index', () => {
           getMatch(undefined, undefined, undefined, 4),
           getMatch(undefined, undefined, undefined, 1),
           getMatch(undefined, undefined, undefined, 1),
-        ]
+        ],
       });
 
       expect(result).to.equal(4);

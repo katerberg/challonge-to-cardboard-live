@@ -8,13 +8,19 @@
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
     "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-mocha": "^6.2.2",
     "mocha": "^6.2.2",
-    "sinon": "^8.0.1"
+    "sinon": "^8.0.1",
+    "watch": "^1.0.2"
   },
   "scripts": {
     "test": "mocha 'src/*.test.js' 'test'",
     "test:watch": "yarn test --watch",
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "yarn lint:ci --fix",
+    "lint:ci": "eslint src index.js test",
+    "lint:watch": "watch 'yarn lint' ."
   },
   "dependencies": {
     "axios": "^0.19.0",

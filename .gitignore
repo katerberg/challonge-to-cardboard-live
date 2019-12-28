@@ -3,5 +3,5 @@
 .DS_STORE
 *.log
 /standings.xml
-/rd8-standings.html
+/*.html
 /players.csv

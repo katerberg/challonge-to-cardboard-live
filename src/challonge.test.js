@@ -1,7 +1,13 @@
 const fs = require('fs');
 const util = require('util');
 const {expect} = require('chai');
-const {getPlayers, getTournamentResults, transformResultsToHtml, transformResultsToXml} = require('./challonge');
+const {
+  getRound,
+  getPlayers,
+  getTournamentResults,
+  transformResultsToHtml,
+  transformResultsToXml,
+} = require('./challonge');
 const sinon = require('sinon');
 const axios = require('axios');
 
@@ -15,7 +21,7 @@ function getParticipant(name) {
   return {participant: {id: getRandomNumber(), name: name || `${getRandomNumber()}`, seed: getRandomNumber()}};
 }
 
-function getMatch(playerId, isWon, gamesGivenUp) {
+function getMatch(playerId = getRandomNumber(), isWon = false, gamesGivenUp = 0, round = getRandomNumber()) {
   const isPlayerOne = Math.random() > 0.5;
   let csv = '2-';
   if (gamesGivenUp) {
@@ -36,6 +42,7 @@ function getMatch(playerId, isWon, gamesGivenUp) {
       winner_id: isWon ? playerId : getRandomNumber(),
       loser_id: isWon ? getRandomNumber() : playerId,
       scores_csv: csv,
+      round: round || getRandomNumber(),
     }
   };
 }
@@ -211,6 +218,20 @@ describe('Index', () => {
 
       expect(results).to.contain(`"Cao, Elaine",`);
       expect(results).to.contain(`"Hamilton, John Ryan",`);
+    });
+  });
+
+  describe('getRound(json)', () => {
+    it('gives the max round in the matches', () => {
+      const result = getRound({
+        matches: [
+          getMatch(undefined, undefined, undefined, 4),
+          getMatch(undefined, undefined, undefined, 1),
+          getMatch(undefined, undefined, undefined, 1),
+        ]
+      });
+
+      expect(result).to.equal(4);
     });
   });
 });

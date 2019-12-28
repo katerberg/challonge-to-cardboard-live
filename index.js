@@ -3,6 +3,7 @@ const {
   transformResultsToHtml,
   transformResultsToXml,
   getPlayers,
+  getRound,
   getTournamentResults,
 } = require('./src/challonge');
 
@@ -15,7 +16,7 @@ getTournamentResults(tournament).then(results => {
   const xml = transformResultsToXml(results);
   const html = transformResultsToHtml(results);
   const players = getPlayers(results);
-  fs.writeFile(`${process.cwd()}/rd8-standings.html`, html, (err) => {
+  fs.writeFile(`${process.cwd()}/rd${getRound(results)}-standings.html`, html, (err) => {
     if (err) {
       throw err;
     }

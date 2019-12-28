@@ -9,6 +9,11 @@ function getTournamentResults(tournament) {
   });
 }
 
+function getRound(json) {
+  return json.matches.map(m => m.match.round)
+    .reduce((a, c) => c > a ? c : a, 0);
+}
+
 function getMatchPoints(matches, playerId) {
   return matches
     .map(m => m.match)
@@ -106,6 +111,7 @@ function commaSeparateName(name) {
 }
 
 module.exports = {
+  getRound,
   getTournamentResults,
   getPlayers,
   transformResultsToHtml,

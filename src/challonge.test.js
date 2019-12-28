@@ -1,7 +1,7 @@
 const fs = require('fs');
 const util = require('util');
 const {expect} = require('chai');
-const {getPlayers, getTournamentResults, transformResultsToHtml, transformResultsToXml} = require('.');
+const {getPlayers, getTournamentResults, transformResultsToHtml, transformResultsToXml} = require('./challonge');
 const sinon = require('sinon');
 const axios = require('axios');
 

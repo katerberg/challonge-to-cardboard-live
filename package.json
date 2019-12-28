@@ -12,9 +12,9 @@
     "sinon": "^8.0.1"
   },
   "scripts": {
-    "test": "mocha 'index.test.js' 'test'",
+    "test": "mocha 'src/*.test.js' 'test'",
     "test:watch": "yarn test --watch",
-    "start": "node -e 'require(\"./index\").translate()'"
+    "start": "node index.js"
   },
   "dependencies": {
     "axios": "^0.19.0",

@@ -8,21 +8,23 @@ const {
 const {
   uploadToCardboardLive,
 } = require('./src/cardboardLive');
+const creds = require('./creds/cardboardLive');
 
 const [,, tournament] = process.argv;
 if (!tournament) {
-  console.log('Missing tournament parameter');
+  console.error('Missing tournament parameter');
   process.exit(1);
 }
 
 getTournamentResults(tournament).then(results => {
   const html = transformResultsToHtml(results);
   const players = getPlayers(results);
+  const round = getRound(results);
   fs.writeFile(`${process.cwd()}/rd${getRound(results)}-standings.html`, html, (err) => {
     if (err) {
       throw err;
     }
-    uploadToCardboardLive(html, 'b0aca69d-2989-11ea-b3fc-12f15ef2af51')
+    uploadToCardboardLive(html, creds.tournament, round)
       .then(() => console.log('successful upload'))
       .catch(e => console.error(e));
   });
@@ -32,6 +34,6 @@ getTournamentResults(tournament).then(results => {
     }
   });
 }).catch(() => {
-  console.log('Tournament not found');
+  console.error('Tournament not found');
   process.exit(1);
 });

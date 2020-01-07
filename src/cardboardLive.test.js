@@ -34,14 +34,14 @@ describe('cardboardLive', () => {
       const html = `${getRandomNumber()}`;
       const tournamentId = `${getRandomNumber()}`;
 
-      uploadToCardboardLive(html, tournamentId);
+      uploadToCardboardLive(html, tournamentId, '2');
 
       expect(axios.post).to.have.been.called;
       const [, postBody] = axios.post.getCall(0).args;
       expect(postBody.startsWith('----')).to.be.true;
       expect(postBody).to.contain('Content-Disposition: form-data;');
       expect(postBody).to.contain('name="file";');
-      expect(postBody).to.contain('filename="rd7-standings.html"');
+      expect(postBody).to.contain('filename="rd2-standings.html"');
       expect(postBody).to.contain('Content-Type: text/html');
       expect(postBody).to.contain(html);
     });

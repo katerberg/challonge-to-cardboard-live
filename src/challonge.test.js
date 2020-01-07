@@ -54,7 +54,7 @@ function getSampleResults() {
   });
 }
 
-describe('Index', () => {
+describe('challonge', () => {
   describe('getTournamentResults()', () => {
     beforeEach(() => {
       sinon.stub(axios, 'get');

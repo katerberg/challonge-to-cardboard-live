@@ -5,12 +5,16 @@ const {
   getRound,
   getTournamentResults,
 } = require('./src/challonge');
+const {
+  uploadToCardboardLive,
+} = require('./src/cardboardLive');
 
 const [,, tournament] = process.argv;
 if (!tournament) {
   console.log('Missing tournament parameter');
   process.exit(1);
 }
+
 getTournamentResults(tournament).then(results => {
   const html = transformResultsToHtml(results);
   const players = getPlayers(results);
@@ -18,6 +22,9 @@ getTournamentResults(tournament).then(results => {
     if (err) {
       throw err;
     }
+    uploadToCardboardLive(html, 'b0aca69d-2989-11ea-b3fc-12f15ef2af51')
+      .then(() => console.log('successful upload'))
+      .catch(e => console.error(e));
   });
   fs.writeFile(`${process.cwd()}/players.csv`, players, (err) => {
     if (err) {

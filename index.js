@@ -8,15 +8,20 @@ const {
 const {
   uploadToCardboardLive,
 } = require('./src/cardboardLive');
-const creds = require('./creds/cardboardLive');
+const cardboardLiveCreds = require('./creds/cardboardLive');
+const challongeCreds = require('./creds/challonge');
 
-const [,, tournament] = process.argv;
-if (!tournament) {
-  console.error('Missing tournament parameter');
+if (!challongeCreds.tournament) {
+  console.error('Missing challonge tournament parameter');
+  process.exit(1);
+}
+if (!cardboardLiveCreds.tournament) {
+  console.error('Missing cardboardLive tournament parameter');
   process.exit(1);
 }
 
-getTournamentResults(tournament).then(results => {
+console.debug(`Getting ${challongeCreds.tournament} tournament results`);
+getTournamentResults(challongeCreds.tournament).then(results => {
   const html = transformResultsToHtml(results);
   const players = getPlayers(results);
   const round = getRound(results);
@@ -24,8 +29,9 @@ getTournamentResults(tournament).then(results => {
     if (err) {
       throw err;
     }
-    uploadToCardboardLive(html, creds.tournament, round)
-      .then(() => console.log('successful upload'))
+    console.debug(`Uploading results to ${cardboardLiveCreds.tournament}`);
+    uploadToCardboardLive(html, cardboardLiveCreds.tournament, round)
+      .then(() => console.debug('successful upload'))
       .catch(e => console.error(e));
   });
   fs.writeFile(`${process.cwd()}/players.csv`, players, (err) => {

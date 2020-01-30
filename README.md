@@ -15,7 +15,8 @@ Populate your creds folder with two files
 
 ```cardboardLive.json
 {
-  "bearer_token": "BEARER_TOKEN_FROM_CARDBOARD_LIVE",
+  "username": "CARDBOARD_LIVE_USERNAME",
+  "password": "CARDBOARD_LIVE_PASSWORD",
   "tournament": "CARDBOARD_LIVE_TOURNAMENT_ID"
 }
 ```

@@ -18,6 +18,10 @@ function uploadToCardboardLive(token, html, tournamentId, roundNumber) {
   return axios.post(`https://app.cardboard.live/api/api/v1/tournaments/${tournamentId}/import_standings`, body, options);
 }
 
+function isValidToken(token) {
+  return new Date().valueOf() < token.date + token.expires_in
+}
+
 function login(username, password) {
   const options = {
     headers: {
@@ -35,6 +39,7 @@ function login(username, password) {
 }
 
 module.exports = {
+  isValidToken,
   login,
   uploadToCardboardLive,
 };

@@ -1,5 +1,6 @@
 const {expect} = require('chai');
 const {
+  isValidToken,
   uploadToCardboardLive,
 } = require('./cardboardLive');
 const sinon = require('sinon');
@@ -10,7 +11,7 @@ function getRandomNumber() {
 }
 
 describe('cardboardLive', () => {
-  describe('uploadToCardboardLive(html, tournamentId)', () => {
+  describe('uploadToCardboardLive(token, html, tournamentId, roundNumber)', () => {
     beforeEach(() => {
       sinon.stub(axios, 'post');
     });
@@ -23,7 +24,7 @@ describe('cardboardLive', () => {
       const html = `${getRandomNumber()}`;
       const tournamentId = `${getRandomNumber()}`;
 
-      uploadToCardboardLive(html, tournamentId);
+      uploadToCardboardLive({}, html, tournamentId);
 
       expect(axios.post).to.have.been.called;
       const call = axios.post.getCall(0);
@@ -34,7 +35,7 @@ describe('cardboardLive', () => {
       const html = `${getRandomNumber()}`;
       const tournamentId = `${getRandomNumber()}`;
 
-      uploadToCardboardLive(html, tournamentId, '2');
+      uploadToCardboardLive({}, html, tournamentId, '2');
 
       expect(axios.post).to.have.been.called;
       const [, postBody] = axios.post.getCall(0).args;
@@ -50,7 +51,7 @@ describe('cardboardLive', () => {
       const html = `${getRandomNumber()}`;
       const tournamentId = `${getRandomNumber()}`;
 
-      uploadToCardboardLive(html, tournamentId);
+      uploadToCardboardLive({}, html, tournamentId);
 
       expect(axios.post).to.have.been.called;
       const [, , creds] = axios.post.getCall(0).args;
@@ -58,6 +59,32 @@ describe('cardboardLive', () => {
       expect(creds.headers.Authorization.startsWith('Bearer')).to.be.true;
       expect(creds.headers['Content-Type']).to.contain('boundary');
       expect(creds.headers['Content-Type']).to.contain('multipart/form-data');
+    });
+  });
+
+  describe('isValidToken(token)', () => {
+    it('is true for non-expired token', () => {
+      const currentTime = new Date().valueOf();
+      const input = {
+        date: currentTime - 500,
+        expires_in: 1000,
+      };
+
+      const result = isValidToken(input);
+
+      expect(result).to.be.true;
+    });
+
+    it('is false for expired token', () => {
+      const currentTime = new Date().valueOf();
+      const input = {
+        date: currentTime - 1500,
+        expires_in: 1000,
+      };
+
+      const result = isValidToken(input);
+
+      expect(result).to.be.false;
     });
   });
 });

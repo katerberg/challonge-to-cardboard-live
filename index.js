@@ -7,6 +7,7 @@ const {
 } = require('./src/challonge');
 const {
   login,
+  isValidToken,
   uploadToCardboardLive,
 } = require('./src/cardboardLive');
 const cardboardLiveCreds = require('./creds/cardboardLive');
@@ -24,8 +25,8 @@ if (!cardboardLiveCreds.tournament) {
 console.debug('Checking for stored token'); 
 fs.readFile('./creds/cardboardToken.json', 'utf8', async (err, data) => {
   let token;
-  if (err) {
-    console.debug('No token found. Logging in again'); 
+  if (err || !isValidToken(JSON.parse(data))) {
+    console.debug(`${err ? 'No token found' : 'Expired token found'}. Logging in again`); 
     const result = await login(cardboardLiveCreds.username, cardboardLiveCreds.password);
     token = result.access_token;
   } else {

@@ -67,7 +67,7 @@ describe('cardboardLive', () => {
       const currentTime = new Date().valueOf();
       const input = {
         date: currentTime - 500,
-        expires_in: 1000,
+        expires_in: 1000, //eslint-disable-line camelcase
       };
 
       const result = isValidToken(input);
@@ -79,7 +79,7 @@ describe('cardboardLive', () => {
       const currentTime = new Date().valueOf();
       const input = {
         date: currentTime - 1500,
-        expires_in: 1000,
+        expires_in: 1000, //eslint-disable-line camelcase
       };
 
       const result = isValidToken(input);

@@ -22,15 +22,15 @@ if (!cardboardLiveCreds.tournament) {
   process.exit(1);
 }
 
-console.debug('Checking for stored token'); 
-fs.readFile('./creds/cardboardToken.json', 'utf8', async (err, data) => {
+console.debug('Checking for stored token');
+fs.readFile('./creds/cardboardToken.json', 'utf8', async(err, data) => {
   let token;
   if (err || !isValidToken(JSON.parse(data))) {
-    console.debug(`${err ? 'No token found' : 'Expired token found'}. Logging in again`); 
+    console.debug(`${err ? 'No token found' : 'Expired token found'}. Logging in again`);
     const result = await login(cardboardLiveCreds.username, cardboardLiveCreds.password);
     token = result.access_token;
   } else {
-    console.debug('Token found. Proceeding.'); 
+    console.debug('Token found. Proceeding.');
     token = JSON.parse(data).access_token;
   }
 

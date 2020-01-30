@@ -19,7 +19,7 @@ function uploadToCardboardLive(token, html, tournamentId, roundNumber) {
 }
 
 function isValidToken(token) {
-  return new Date().valueOf() < token.date + token.expires_in
+  return new Date().valueOf() < token.date + token.expires_in;
 }
 
 function login(username, password) {
@@ -33,9 +33,13 @@ function login(username, password) {
   const body = `grant_type=&username=${encodeURIComponent(username)}&client_id=1&client_secret=secret&password=${password}&grant_type=password`;
 
   return axios.post('https://app.cardboard.live/api/oauth/v2/token', body, options).then(r => r.data).then(token => {
-    fs.writeFile(`${process.cwd()}/creds/cardboardToken.json`, JSON.stringify({...token, date: new Date().valueOf()}), () => {});
+    fs.writeFile(`${process.cwd()}/creds/cardboardToken.json`, JSON.stringify({...token, date: new Date().valueOf()}), (err) => {
+      if (err) {
+        console.error('Unable to write cardboard live token');
+      }
+    });
     return token;
-  });;
+  });
 }
 
 module.exports = {

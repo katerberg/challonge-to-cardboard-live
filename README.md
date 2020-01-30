@@ -2,7 +2,7 @@
 
 This is a node layer to allow you to run a tournament using Challonge and have it be visible in the Cardboard Live overlay on Twitch
 
-### Running
+### Running Once
 
 Populate your creds folder with two files
 ```challonge.json
@@ -26,3 +26,12 @@ yarn
 yarn start
 ```
 
+
+### Running on a timer
+
+Usually when running a tournament, you will want to ensure that your results are showing regularly without having to rerun the script.
+To make this happen, you will need to have a timer that runs this script regularly. Adding the following your `crontab` will do so on Linux systems.
+
+```
+*/10 * * * * node /home/mark.katerberg/src/challonge-to-cardboard-live/index.js
+```

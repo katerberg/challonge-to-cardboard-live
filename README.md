@@ -33,5 +33,5 @@ Usually when running a tournament, you will want to ensure that your results are
 To make this happen, you will need to have a timer that runs this script regularly. Adding the following your `crontab` will do so on Linux systems.
 
 ```
-*/10 * * * * node /home/mark.katerberg/src/challonge-to-cardboard-live/index.js
+*/10 * * * * node /home/mark.katerberg/src/challonge-to-cardboard-live/index.js >> /home/mark.katerberg/cc.log 2>&1
 ```

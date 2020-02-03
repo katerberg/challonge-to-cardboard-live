@@ -34,6 +34,8 @@ fs.readFile('./creds/cardboardToken.json', 'utf8', async(err, data) => {
     token = JSON.parse(data).access_token;
   }
 
+  console.debug(`Using token: ${token}`);
+
   console.debug(`Getting ${challongeCreds.tournament} tournament results`);
   getTournamentResults(challongeCreds.tournament).then(results => {
     const html = transformResultsToHtml(results);

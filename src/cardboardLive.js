@@ -1,5 +1,4 @@
 const fs = require('fs');
-const creds = require('../creds/cardboardLive.json');
 const axios = require('axios');
 
 function uploadToCardboardLive(token, html, tournamentId, roundNumber) {
@@ -10,7 +9,7 @@ function uploadToCardboardLive(token, html, tournamentId, roundNumber) {
   const options = {
     headers: {
       Accept: 'application/json, text/plain, */*',
-      Authorization: `Bearer ${creds.bearer_token}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data; boundary=---------------------------206411090965099725487092284',
     },
   };

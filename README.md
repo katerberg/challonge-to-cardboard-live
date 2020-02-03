@@ -33,5 +33,7 @@ Usually when running a tournament, you will want to ensure that your results are
 To make this happen, you will need to have a timer that runs this script regularly. Adding the following your `crontab` will do so on Linux systems.
 
 ```
-*/10 * * * * node /home/mark.katerberg/src/challonge-to-cardboard-live/index.js >> /home/mark.katerberg/cc.log 2>&1
+*/10 * * * * /Users/mark.katerberg/src/challonge-to-cardboard-live/cronstart.sh >> /Users/mark.katerberg/cc.log 2>&1
 ```
+
+Since this will write your standings file as well as your creds to wherever the script is run from, you may need to create a `~/creds` folder.
